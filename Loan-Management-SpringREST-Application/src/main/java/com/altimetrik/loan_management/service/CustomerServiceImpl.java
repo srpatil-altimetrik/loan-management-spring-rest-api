@@ -35,8 +35,13 @@ public class CustomerServiceImpl implements CustomerService {
 	public ResponseEntity<String> addCustomer(Customer customer) {
 		// TODO Auto-generated method stub
 		try {
-			customerRepository.save(customer);
-			return ResponseEntity.status(201).body("Customer added successfully");
+			Optional<Customer> existingCustomer = customerRepository.findById(customer.getCustomerId());
+			if (existingCustomer.isPresent()) {
+				return ResponseEntity.status(409).body("Customer already exists with ID: " + customer.getCustomerId());
+			} else {
+				customerRepository.save(customer);
+				return ResponseEntity.status(201).body("Customer added successfully");
+			}
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Error adding customer: " + e.getMessage());
 		}
