@@ -7,5 +7,5 @@ import com.altimetrik.loan_management.model.Customer;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
-
+	
 }

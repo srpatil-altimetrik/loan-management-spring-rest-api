@@ -1,10 +1,9 @@
 package com.altimetrik.loan_management.model;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -17,18 +16,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Loan {
 	@Id
-	private int loanId;
+	private Integer loanId;
 	
-	@ManyToOne(cascade = {CascadeType.ALL})	
+	@ManyToOne
 	@JoinColumn(name = "customerId")
 	private Customer customer;
-	
-	private double principalAmount;
-	private double interestRate;
-	private int loanTerm;
+
+	private Double principalAmount;
+	private Double interestRate;
+	private Integer loanTerm;
 	private String loanType;
 	private String loanStatus;
 }

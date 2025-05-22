@@ -1,13 +1,14 @@
 package com.altimetrik.loan_management.service;
 
-import com.altimetrik.loan_management.dto.LoanRequestDTO;
+import org.springframework.http.ResponseEntity;
+
 import com.altimetrik.loan_management.model.Loan;
 
 public interface LoanService {
 	
-	String applyLoan(LoanRequestDTO loanRequestDTO);
-
-	public void calculateInterest(int loanId);
+//	public ResponseEntity<String> applyLoan(int customerId, Loan loan);
+	public ResponseEntity<String> applyLoan(Loan loan);
+	public ResponseEntity<String> calculateInterest(Integer loanId);
 
 	public String getLoanStatus(int loanId);
 

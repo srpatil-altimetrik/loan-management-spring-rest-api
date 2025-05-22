@@ -10,6 +10,6 @@ public class GlobalExceptions extends RuntimeException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGlobalException(Exception ex) {
-        return new ResponseEntity<>("Unexpected error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Unexpected error: " + ex.getMessage()+" "+ ex.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

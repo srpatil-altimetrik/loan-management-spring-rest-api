@@ -1,6 +1,10 @@
 package com.altimetrik.loan_management.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -14,10 +18,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Customer {
 	@Id
-	private int customerId;
+	private Integer customerId;
 	private String customerName;
 	private String customerEmail;
 	private String customerPhoneNo;
 	private String customerAddress;
-	private int customerCreditScore;
+	private Integer customerCreditScore;
 }
