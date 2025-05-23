@@ -59,7 +59,7 @@ public class LoanController {
 		return loanService.calculateEMI(loanId);
 	}
 	
-	@GetMapping("/loanRepayment/{loanId}/{amount}")
+	@PostMapping("/loanRepayment/{loanId}/{amount}")
 	public ResponseEntity<String> loanRepayment(@PathVariable Integer loanId, @PathVariable Double amount) {
 		return loanService.loanRepayment(loanId, amount);
 	}

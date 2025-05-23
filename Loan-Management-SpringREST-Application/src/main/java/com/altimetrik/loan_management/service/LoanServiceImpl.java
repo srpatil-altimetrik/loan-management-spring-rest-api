@@ -27,34 +27,33 @@ public class LoanServiceImpl implements LoanService {
 	public ResponseEntity<Object> applyLoan(LoanRequestDTO loanRequestDTO) {
 		// TODO Auto-generated method stub
 		if (loanRequestDTO.getCustomerId() == null || loanRequestDTO.getCustomerId() == null) {
-		    throw new IllegalArgumentException("Customer ID must not be null");
+			throw new IllegalArgumentException("Customer ID must not be null");
 		}
-		
-	    try {
-	        Optional<Customer> customerOptional = customerRepository.findById(loanRequestDTO.getCustomerId());
-	        if (customerOptional.isPresent()) {
-	            Customer customer = customerOptional.get();
-	            Loan loan = new Loan();
 
-	            loan.setCustomer(customer);
-	            loan.setPrincipalAmount(loanRequestDTO.getPrincipalAmount());
-	            loan.setInterestRate(loanRequestDTO.getInterestRate());
-	            loan.setLoanTerm(loanRequestDTO.getLoanTerm());
-	            loan.setLoanType(loanRequestDTO.getLoanType());
-	            loan.setLoanStatus("Pending");
+		try {
+			Optional<Customer> customerOptional = customerRepository.findById(loanRequestDTO.getCustomerId());
+			if (customerOptional.isPresent()) {
+				Customer customer = customerOptional.get();
+				Loan loan = new Loan();
 
-	            Loan savedLoan = loanRepository.save(loan);
-	            return ResponseEntity.status(HttpStatus.CREATED).body(savedLoan);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                    .body("Customer not found with ID: " + loanRequestDTO.getCustomerId());
-	        }
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body("Error applying for loan: " + e.getMessage());
-	    }
+				loan.setCustomer(customer);
+				loan.setPrincipalAmount(loanRequestDTO.getPrincipalAmount());
+				loan.setInterestRate(loanRequestDTO.getInterestRate());
+				loan.setLoanTerm(loanRequestDTO.getLoanTerm());
+				loan.setLoanType(loanRequestDTO.getLoanType());
+				loan.setLoanStatus("Pending");
+
+				Loan savedLoan = loanRepository.save(loan);
+				return ResponseEntity.status(HttpStatus.CREATED).body(savedLoan);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body("Customer not found with ID: " + loanRequestDTO.getCustomerId());
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error applying for loan: " + e.getMessage());
+		}
 	}
-
 
 	@Override
 	public ResponseEntity<String> calculateInterest(Integer loanId) {
@@ -67,8 +66,8 @@ public class LoanServiceImpl implements LoanService {
 				int tenure = loan.getLoanTerm();
 
 				double interest = calculateInterest(principal, rate, tenure);
-				return ResponseEntity.ok("Calculated interest: " + (int)interest);
-				
+				return ResponseEntity.ok("Calculated interest: " + (int) interest);
+
 			} else {
 				return ResponseEntity.status(404).body("Loan not found with ID: " + loanId);
 			}
@@ -79,8 +78,8 @@ public class LoanServiceImpl implements LoanService {
 
 	// Overloaded method
 	public double calculateInterest(double principal, double rate, int tenure) {
-		
-		double interest = (principal * rate * tenure) / 12;
+
+		double interest = (principal * rate * tenure) / (100 * 12);
 		return interest;
 	}
 
@@ -141,16 +140,22 @@ public class LoanServiceImpl implements LoanService {
 			if (loanOptional.isPresent()) {
 				Loan loan = loanOptional.get();
 				double principal = loan.getPrincipalAmount();
+				double rate = loan.getInterestRate();
+				int tenure = loan.getLoanTerm();
 				double remainingAmount = principal - amount;
-
-				if (remainingAmount <= 0) {
-					loan.setLoanStatus("Closed");
-					loan.setPrincipalAmount(0.0);
+				double emi = (principal * rate * Math.pow(1 + rate, tenure)) / (Math.pow(1 + rate, tenure) - 1);
+				if (amount < emi) {
+					return ResponseEntity.status(400).body("EMI amount is less than the repayment amount");
 				} else {
-					loan.setPrincipalAmount(remainingAmount);
+					if (remainingAmount <= 0) {
+						loan.setLoanStatus("Closed");
+						loan.setPrincipalAmount(0.0);
+					} else {
+						loan.setPrincipalAmount(remainingAmount);
+					}
+					loanRepository.save(loan);
+					return ResponseEntity.ok("Loan repayment successful. Remaining amount: " + remainingAmount);
 				}
-				loanRepository.save(loan);
-				return ResponseEntity.ok("Loan repayment successful. Remaining amount: " + remainingAmount);
 			} else {
 				return ResponseEntity.status(404).body("Loan not found with ID: " + loanId);
 			}
