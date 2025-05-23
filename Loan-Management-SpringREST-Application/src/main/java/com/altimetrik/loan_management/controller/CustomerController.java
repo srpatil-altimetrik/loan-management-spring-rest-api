@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.altimetrik.loan_management.dto.LoanRequestDTO;
 import com.altimetrik.loan_management.model.Customer;
+import com.altimetrik.loan_management.repository.LoanRepository;
 import com.altimetrik.loan_management.service.CustomerService;
 
 @RestController
@@ -29,7 +31,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/getCustomerById/{customerId}")
-	public ResponseEntity<Customer> getCustomerById(@PathVariable int customerId) {
+	public ResponseEntity<Customer> getCustomerById(@PathVariable Integer customerId) {
 		return customerService.getCustomerById(customerId);
 	}
 	
@@ -39,12 +41,17 @@ public class CustomerController {
 	}
 	
 	@PutMapping("/updateCustomer/{customerId}")
-	public ResponseEntity<String> updateCustomer(@PathVariable int customerId, @RequestBody Customer customer) {
+	public ResponseEntity<String> updateCustomer(@PathVariable Integer customerId, @RequestBody Customer customer) {
 		return customerService.updateCustomer(customerId, customer);
 	}
 	
-	@DeleteMapping("/deleteCustomer/{customerId}")
-	public ResponseEntity<String> deleteCustomer(@PathVariable int customerId) {
-		return customerService.deleteCustomer(customerId);
+	@DeleteMapping("/deleteCustomerById/{customerId}")
+	public ResponseEntity<String> deleteCustomerById(@PathVariable Integer customerId) {
+		return customerService.deleteCustomerById(customerId);
+	}
+	
+	@PostMapping("/apply")
+	public ResponseEntity<String> apply(@RequestBody LoanRequestDTO loanRequestDTO) {
+		return customerService.apply(loanRequestDTO);
 	}
 }

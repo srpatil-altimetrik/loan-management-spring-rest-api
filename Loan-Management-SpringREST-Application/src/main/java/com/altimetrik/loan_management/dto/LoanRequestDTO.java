@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class LoanRequestDTO {
+	
 	private Integer customerId;
 	private Integer loanId;
     private Double principalAmount;

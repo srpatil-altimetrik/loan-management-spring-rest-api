@@ -25,6 +25,11 @@ public class LoanServiceImpl implements LoanService {
 
 	@Override
 	public ResponseEntity<Object> applyLoan(LoanRequestDTO loanRequestDTO) {
+		// TODO Auto-generated method stub
+		if (loanRequestDTO.getCustomerId() == null || loanRequestDTO.getCustomerId() == null) {
+		    throw new IllegalArgumentException("Customer ID must not be null");
+		}
+		
 	    try {
 	        Optional<Customer> customerOptional = customerRepository.findById(loanRequestDTO.getCustomerId());
 	        if (customerOptional.isPresent()) {
@@ -62,7 +67,8 @@ public class LoanServiceImpl implements LoanService {
 				int tenure = loan.getLoanTerm();
 
 				double interest = calculateInterest(principal, rate, tenure);
-				return ResponseEntity.ok("Calculated interest: " + interest);
+				return ResponseEntity.ok("Calculated interest: " + (int)interest);
+				
 			} else {
 				return ResponseEntity.status(404).body("Loan not found with ID: " + loanId);
 			}
@@ -73,12 +79,14 @@ public class LoanServiceImpl implements LoanService {
 
 	// Overloaded method
 	public double calculateInterest(double principal, double rate, int tenure) {
+		
 		double interest = (principal * rate * tenure) / 12;
 		return interest;
 	}
 
 	@Override
 	public ResponseEntity<String> getLoanStatus(Integer loanId) {
+		// TODO Auto-generated method stub
 		try {
 			Optional<Loan> loanOptional = loanRepository.findById(loanId);
 			if (loanOptional.isPresent()) {
@@ -106,6 +114,7 @@ public class LoanServiceImpl implements LoanService {
 
 	@Override
 	public ResponseEntity<String> calculateEMI(Integer loanId) {
+		// TODO Auto-generated method stub
 		try {
 			Optional<Loan> loanOptional = loanRepository.findById(loanId);
 			if (loanOptional.isPresent()) {
@@ -152,6 +161,7 @@ public class LoanServiceImpl implements LoanService {
 
 	@Override
 	public ResponseEntity<List<Loan>> getAllLoans() {
+		// TODO Auto-generated method stub
 		try {
 			List<Loan> loans = loanRepository.findAll();
 			if (loans.isEmpty()) {

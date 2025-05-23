@@ -28,8 +28,8 @@ public class LoanController {
 	@Autowired
 	private CustomerService customerService;
 
-	@Autowired
-	private RestTemplate restTemplate;
+//	@Autowired
+//	private RestTemplate restTemplate;
 
 //	@PostMapping("/apply")
 //	public ResponseEntity<String> applyLoan(@RequestBody LoanRequestDTO dto) {
@@ -40,9 +40,7 @@ public class LoanController {
 	
 	@PostMapping("/apply")
 	public ResponseEntity<Object> applyLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
-		String url = "http://localhost:8081/loans/apply";
-		ResponseEntity<Object> response = restTemplate.postForEntity(url, loanRequestDTO, Object.class);
-		return response;
+		return loanService.applyLoan(loanRequestDTO);
 	}
 	
 	@GetMapping("/calculateInterest/{loanId}")

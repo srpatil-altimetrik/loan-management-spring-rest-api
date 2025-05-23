@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.altimetrik.loan_management.dto.LoanRequestDTO;
 import com.altimetrik.loan_management.model.Customer;
+import com.altimetrik.loan_management.model.Loan;
 import com.altimetrik.loan_management.repository.CustomerRepository;
+import com.altimetrik.loan_management.repository.LoanRepository;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	CustomerRepository customerRepository;
+	@Autowired
+	LoanRepository loanRepository;
 
 	@Override
 	public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -48,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public ResponseEntity<Customer> getCustomerById(int customerId) {
+	public ResponseEntity<Customer> getCustomerById(Integer customerId) {
 		// TODO Auto-generated method stub
 		try {
 			Optional<Customer> customer = customerRepository.findById(customerId);
@@ -64,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public ResponseEntity<String> updateCustomer(int customerId, Customer customer) {
+	public ResponseEntity<String> updateCustomer(Integer customerId, Customer customer) {
 		// TODO Auto-generated method stub
 		try {
 			Optional<Customer> existingCustomer = customerRepository.findById(customerId);
@@ -81,14 +86,20 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public ResponseEntity<String> deleteCustomer(int customerId) {
+	public ResponseEntity<String> deleteCustomerById(Integer customerId) {
 		// TODO Auto-generated method stub
 		try {
-			Optional<Customer> existingCustomer = customerRepository.findById(customerId);
-			if (existingCustomer.isPresent()) {
-				customerRepository.delete(existingCustomer.get());
+			Optional<Loan> loan = loanRepository.findById(customerId);
+			if (loan.isPresent()) {
+				loanRepository.delete(loan.get());
 				return ResponseEntity.ok("Customer deleted successfully");
-			} else {
+			}
+//			Optional<Customer> existingCustomer = customerRepository.findById(customerId);
+//			if (existingCustomer.isPresent()) {
+//				customerRepository.delete(existingCustomer.get());
+//				return ResponseEntity.ok("Customer deleted successfully");
+//			} 
+			else {
 				return ResponseEntity.status(404).body("Customer not found");
 			}
 		} catch (Exception e) {
@@ -96,4 +107,25 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 	}
 
+	@Override
+	public ResponseEntity<String> apply(LoanRequestDTO loanRequestDTO) {
+		// TODO Auto-generated method stub
+		try {
+			Optional<Customer> customer = customerRepository.findById(loanRequestDTO.getCustomerId());
+			if (customer.isPresent()) {
+				Loan loan = new Loan();
+				loan.setCustomer(customer.get());
+				loan.setPrincipalAmount(loanRequestDTO.getPrincipalAmount());
+				loan.setInterestRate(loanRequestDTO.getInterestRate());
+				loan.setLoanTerm(loanRequestDTO.getLoanTerm());
+				loan.setLoanStatus("Pending");
+				loanRepository.save(loan);
+				return ResponseEntity.ok("Loan applied successfully");
+			} else {
+				return ResponseEntity.status(404).body("Customer not found with ID: " + loanRequestDTO.getCustomerId());
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error applying for loan: " + e.getMessage());
+		}
+	}
 }

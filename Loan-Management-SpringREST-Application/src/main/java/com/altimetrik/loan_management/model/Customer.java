@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Customer {
 	@Id
-	private Integer customerId;
+    private Integer customerId;
 	private String customerName;
 	private String customerEmail;
 	private String customerPhoneNo;
